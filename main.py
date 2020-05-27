@@ -1,7 +1,5 @@
 from datetime import datetime, timedelta
 import logging
-import os
-import pickle
 import sys
 import traceback
 
@@ -23,6 +21,7 @@ from api import (
     StudentUsage,
     Teachers,
     Topics,
+    Meet,
 )
 from config import Config, db_generator
 from mailer import Mailer
@@ -56,6 +55,7 @@ def get_credentials(config):
         "https://www.googleapis.com/auth/classroom.rosters",
         "https://www.googleapis.com/auth/classroom.student-submissions.students.readonly",
         "https://www.googleapis.com/auth/classroom.topics",
+        "https://www.googleapis.com/auth/admin.reports.audit.readonly",
     ]
     return service_account.Credentials.from_service_account_file(
         "service.json", scopes=SCOPES, subject=config.ACCOUNT_EMAIL
@@ -85,10 +85,9 @@ def main(config):
             start_date = last_date + timedelta(days=1)
         else:
             start_date = datetime.strptime(config.SCHOOL_YEAR_START, "%Y-%m-%d")
-        date_range = pd.date_range(start=start_date, end=datetime.today()).strftime(
-            "%Y-%m-%d"
-        )
-        usage.batch_pull_data(dates=date_range, overwrite=False)
+        date_range = pd.date_range(start=start_date, end=datetime.today())
+        date_range_string = date_range.strftime("%Y-%m-%d")
+        usage.batch_pull_data(dates=date_range_string, overwrite=False)
 
     # Get guardians
     if config.PULL_GUARDIANS:
@@ -115,10 +114,6 @@ def main(config):
     ):
         courses = Courses(classroom_service, sql, config).return_all_data()
         course_ids = courses.id.unique()
-
-    # Get course aliases
-    if config.PULL_ALIASES:
-        CourseAliases(classroom_service, sql, config).batch_pull_data(course_ids)
 
     # Get course invitations
     if config.PULL_INVITATIONS:
@@ -159,6 +154,10 @@ def main(config):
     # Get student coursework submissions
     if config.PULL_SUBMISSIONS:
         StudentSubmissions(classroom_service, sql, config).batch_pull_data(course_ids)
+
+    # Get Meet data
+    if config.PULL_MEET:
+        Meet(admin_reports_service, sql, config).batch_pull_data()
 
 
 if __name__ == "__main__":

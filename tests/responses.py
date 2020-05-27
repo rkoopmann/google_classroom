@@ -274,8 +274,8 @@ STUDENT_SOLUTION = pd.DataFrame(
     {
         "courseId": ["123", "123"],
         "userId": ["1", "2"],
-        "profile.name.fullName": ["Test User", "Another User"],
-        "profile.emailAddress": ["test_user@email.com", "another_user@email.com"],
+        "fullName": ["Test User", "Another User"],
+        "emailAddress": ["test_user@email.com", "another_user@email.com"],
     }
 )
 STUDENT_RESPONSE = {
@@ -314,8 +314,8 @@ TEACHER_SOLUTION = pd.DataFrame(
     {
         "courseId": ["111", "333", "444"],
         "userId": ["555", "321", "555"],
-        "profile.name.fullName": ["Boss Lady", "Mr. Teacher", "Mrs. Teacher"],
-        "profile.emailAddress": [
+        "fullName": ["Boss Lady", "Mr. Teacher", "Mrs. Teacher"],
+        "emailAddress": [
             "boss_lady@email.com",
             "mr_teacher@email.com",
             "mrs_teacher@email.com",
@@ -583,4 +583,65 @@ COURSEWORK_RESPONSE = {
             "topicId": "20",
         },
     ]
+}
+
+STUDENT_USAGE_SOLUTION = pd.DataFrame(
+    {
+        "Email": ["user1@email.com", "user2@email.com", "user3@email.com"],
+        "AsOfDate": [
+            pd.to_datetime("2020-02-27 00:00:00"),
+            pd.to_datetime("2020-02-27 00:00:00"),
+            pd.to_datetime("2020-02-28 00:00:00"),
+        ],
+        "LastUsedTime": [
+            pd.to_datetime("2020-02-27 18:11:01"),
+            pd.to_datetime("1970-01-01 00:00:00"),
+            pd.to_datetime("2020-02-14 20:29:34"),
+        ],
+        "ImportDate": [
+            pd.to_datetime("today").normalize(),
+            pd.to_datetime("today").normalize(),
+            pd.to_datetime("today").normalize(),
+        ],
+    }
+)
+STUDENT_USAGE_RESPONSE = {
+    "2020-02-27": {
+        "usageReports": [
+            {
+                "date": "2020-02-27",
+                "entity": {"userEmail": "user1@email.com"},
+                "parameters": [
+                    {
+                        "name": "classroom:last_interaction_time",
+                        "datetimeValue": "2020-02-27T18:11:01.000Z",
+                    }
+                ],
+            },
+            {
+                "date": "2020-02-27",
+                "entity": {"userEmail": "user2@email.com"},
+                "parameters": [
+                    {
+                        "name": "classroom:last_interaction_time",
+                        "datetimeValue": "1970-01-01T00:00:00.000Z",
+                    }
+                ],
+            },
+        ],
+    },
+    "2020-02-28": {
+        "usageReports": [
+            {
+                "date": "2020-02-28",
+                "entity": {"userEmail": "user3@email.com"},
+                "parameters": [
+                    {
+                        "name": "classroom:last_interaction_time",
+                        "datetimeValue": "2020-02-14T20:29:34.000Z",
+                    }
+                ],
+            },
+        ],
+    },
 }
